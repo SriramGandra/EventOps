@@ -19,8 +19,8 @@ services:
 
   backend:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: backend/Dockerfile
     container_name: eventops-backend
     restart: always
     environment:
@@ -38,10 +38,10 @@ services:
 
   frontend:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile
-      args:
-        VITE_API_URL: http://localhost:8080/api
+      context: .
+      dockerfile: frontend/Dockerfile
+    args:
+      VITE_API_URL: http://localhost:8080/api
     container_name: eventops-frontend
     restart: always
     ports:
