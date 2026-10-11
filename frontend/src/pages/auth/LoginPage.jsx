@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { AlertMessage } from '../../components/common/Feedback';
+import { IconEye, IconEyeOff } from '../../components/common/Icons';
 
 export const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -18,13 +20,13 @@ export const LoginPage = () => {
     setLoading(true);
 
     try {
-      const userInfo = await login(email, password);
+      const userInfo = await login(email.trim(), password.trim());
       if (userInfo.role === 'ADMIN') navigate('/admin/dashboard');
       else if (userInfo.role === 'COORDINATOR') navigate('/coordinator/dashboard');
       else if (userInfo.role === 'TEAM_LEAD') navigate('/teamlead/dashboard');
       else navigate('/volunteer/dashboard');
     } catch (err) {
-      setError(err.message || 'Authentication failed. Please check credentials.');
+      setError(err.message || 'Authentication failed. Please verify your email and password (default admin password is admin123).');
     } finally {
       setLoading(false);
     }
@@ -63,15 +65,38 @@ export const LoginPage = () => {
             <label className="form-label" htmlFor="password">
               Password
             </label>
-            <input
-              id="password"
-              type="password"
-              className="form-control"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+              <input
+                id="password"
+                type={showPassword ? 'text' : 'password'}
+                className="form-control"
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                style={{ paddingRight: '2.5rem' }}
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: 'absolute',
+                  right: '0.75rem',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'var(--text-muted, #64748b)',
+                  padding: 0
+                }}
+                title={showPassword ? 'Hide password' : 'Show password'}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? <IconEyeOff size={18} /> : <IconEye size={18} />}
+              </button>
+            </div>
           </div>
 
           <button
